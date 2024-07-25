@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import JobListing from "./JobListing.vue";
 import { onMounted, reactive } from "vue";
 import { RouterLink } from "vue-router";
-import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import { VueSpinner } from "vue3-spinners";
 import axios from "axios";
 
 defineProps({
@@ -13,10 +13,15 @@ defineProps({
   },
 });
 
-const state = reactive({
+interface State {
+  jobs: any[];
+  isLoading: boolean;
+}
+const state: State = reactive({
   jobs: [],
   isLoading: true,
 });
+
 onMounted(async () => {
   try {
     const response = await axios.get("/api/jobs");
@@ -35,7 +40,7 @@ onMounted(async () => {
         Browse Jobs
       </h2>
       <div v-if="state.isLoading" class="text-center text-gray-500 py-6">
-        <PulseLoader />
+        <VueSpinner size="40" color="green" class="mx-auto" />
       </div>
       <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <JobListing

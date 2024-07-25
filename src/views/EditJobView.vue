@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, reactive } from "vue";
 import { useToast, POSITION } from "vue-toastification";
 import { useRoute } from "vue-router";

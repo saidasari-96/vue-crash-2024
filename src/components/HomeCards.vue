@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import Card from "./Card.vue";
 import { RouterLink } from "vue-router";
 </script>

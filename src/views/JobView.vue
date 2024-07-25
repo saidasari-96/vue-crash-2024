@@ -1,5 +1,5 @@
-<script setup>
-import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+<script setup lang="ts">
+import { VueSpinner } from "vue3-spinners";
 import BackButton from "@/components/BackButton.vue";
 import { useToast } from "vue-toastification";
 import { reactive, onMounted } from "vue";
@@ -10,9 +10,13 @@ const route = useRoute();
 const router = useRouter();
 const toast = useToast();
 const jobId = route.params.id;
-const state = reactive({
+interface State {
+  job: any;
+  isLoading: boolean;
+}
+const state: State = reactive({
   job: {},
-  isloading: true,
+  isLoading: true,
 });
 const deleteJob = async () => {
   try {
@@ -33,14 +37,14 @@ onMounted(async () => {
   } catch (error) {
     console.log(error);
   } finally {
-    state.isloading = false;
+    state.isLoading = false;
   }
 });
 </script>
 
 <template>
   <BackButton />
-  <section v-if="!state.isloading" class="bg-green-50">
+  <section v-if="!state.isLoading" class="bg-green-50">
     <div class="container m-auto py-10 px-6">
       <div class="grid grid-cols-1 md:grid-cols-70/30 w-full gap-6">
         <main>
@@ -119,6 +123,6 @@ onMounted(async () => {
     </div>
   </section>
   <div v-else class="text-center text-gray-500 py-6">
-    <PulseLoader />
+    <VueSpinner size="20" color="red" />
   </div>
 </template>
