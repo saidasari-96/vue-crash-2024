@@ -40,10 +40,9 @@ onMounted(async () => {
     form.company.description = response.data.company.description;
     form.company.contactEmail = response.data.company.contactEmail;
     form.company.contactPhone = response.data.company.contactPhone;
+    state.isloading = false;
   } catch (error) {
     console.log(error);
-  } finally {
-    state.isloading = false;
   }
 });
 const handleUpdate = async () => {

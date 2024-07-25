@@ -26,10 +26,9 @@ onMounted(async () => {
   try {
     const response = await axios.get("/api/jobs");
     state.jobs = response.data;
+    state.isLoading = false;
   } catch (error) {
     console.log(error);
-  } finally {
-    state.isLoading = false;
   }
 });
 </script>

@@ -33,11 +33,10 @@ const deleteJob = async () => {
 onMounted(async () => {
   try {
     const response = await axios.get(`/api/jobs/${jobId}`);
+    state.isLoading = false;
     state.job = response.data;
   } catch (error) {
     console.log(error);
-  } finally {
-    state.isLoading = false;
   }
 });
 </script>
