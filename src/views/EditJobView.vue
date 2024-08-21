@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { onMounted, reactive } from "vue";
-import { useToast, POSITION } from "vue-toastification";
+import { useToast } from "vue-toastification";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import { useStore } from "vuex";
 import router from "@/router";
 
 const route = useRoute();
+const store = useStore();
 const jobId = route.params.id;
 const toast = useToast();
 const form = reactive({
@@ -22,31 +23,24 @@ const form = reactive({
   },
 });
 
-const state = reactive({
-  job: {},
-  isloading: true,
-});
-
 onMounted(async () => {
-  try {
-    const response = await axios.get(`/api/jobs/${jobId}`);
-    state.job = response;
-    form.type = response.data.type;
-    form.title = response.data.title;
-    form.description = response.data.description;
-    form.salary = response.data.salary;
-    form.location = response.data.location;
-    form.company.name = response.data.company.name;
-    form.company.description = response.data.company.description;
-    form.company.contactEmail = response.data.company.contactEmail;
-    form.company.contactPhone = response.data.company.contactPhone;
-    state.isloading = false;
-  } catch (error) {
-    console.log(error);
+  await store.dispatch("fetchJob", jobId);
+  const job = store.getters.job;
+  if (job) {
+    form.type = job.type;
+    form.title = job.title;
+    form.description = job.description;
+    form.salary = job.salary;
+    form.location = job.location;
+    form.company.name = job.company.name;
+    form.company.description = job.company.description;
+    form.company.contactEmail = job.company.contactEmail;
+    form.company.contactPhone = job.company.contactPhone;
   }
 });
 const handleUpdate = async () => {
   const updatedJob = {
+    id: jobId,
     type: form.type,
     title: form.title,
     description: form.description,
@@ -60,9 +54,9 @@ const handleUpdate = async () => {
     },
   };
   try {
-    const response = await axios.put(`/api/jobs/${jobId}`, updatedJob);
+    const jobResponse = await store.dispatch("updateJob", updatedJob);
     toast.success("Job Updated successfully");
-    router.push(`/jobs/${response.data.id}`);
+    router.push(`/jobs/${jobResponse.id}`);
   } catch (error) {
     toast.error("Job was not created");
     console.log(error);

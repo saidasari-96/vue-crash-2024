@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { useToast, POSITION } from "vue-toastification";
-import axios from "axios";
+import { useStore } from "vuex";
 import router from "@/router";
 
 const toast = useToast();
+const store = useStore();
 const form = reactive({
   type: "Full-Time",
   title: "",
@@ -34,11 +35,11 @@ const handleSubmit = async () => {
     },
   };
   try {
-    const response = await axios.post("/api/jobs", newJob);
+    const response = await store.dispatch("addJob", newJob);
     toast.success("Job created successfully", {
       position: POSITION.TOP_LEFT,
     });
-    router.push(`/jobs/${response.data.id}`);
+    router.push(`/jobs/${response.id}`);
   } catch (error) {
     toast.error("Job was not created");
     console.log(error);

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import JobListing from "./JobListing.vue";
-import { onMounted, reactive } from "vue";
+import { onMounted, computed } from "vue";
+import { useStore } from "vuex";
 import { RouterLink } from "vue-router";
 import { VueSpinner } from "vue3-spinners";
-import axios from "axios";
 
 defineProps({
   limit: Number,
@@ -13,37 +13,28 @@ defineProps({
   },
 });
 
-interface State {
-  jobs: any[];
-  isLoading: boolean;
-}
-const state: State = reactive({
-  jobs: [],
-  isLoading: true,
-});
+const store = useStore();
 
-onMounted(async () => {
-  try {
-    const response = await axios.get("/api/jobs");
-    state.jobs = response.data;
-    state.isLoading = false;
-  } catch (error) {
-    console.log(error);
-  }
+const jobs = computed(() => store.getters.jobs);
+const isLoading = computed(() => store.getters.isLoading);
+
+onMounted(() => {
+  store.dispatch("fetchJobs");
 });
 </script>
+
 <template>
   <section class="bg-blue-50 px-4 py-10">
     <div class="container-xl lg:container m-auto">
       <h2 class="text-3xl font-bold text-green-500 mb-6 text-center">
         Browse Jobs
       </h2>
-      <div v-if="state.isLoading" class="text-center text-gray-500 py-6">
+      <div v-if="isLoading" class="text-center text-gray-500 py-6">
         <VueSpinner size="40" color="green" class="mx-auto" />
       </div>
       <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <JobListing
-          v-for="job in state.jobs.slice(0, limit || state.jobs.length)"
+          v-for="job in jobs.slice(0, limit || jobs.length)"
           :key="job.id"
           :job="job"
         />
